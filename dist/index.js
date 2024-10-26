@@ -12,20 +12,33 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const PolyanetsAPI_1 = __importDefault(require("./api/PolyanetsAPI"));
+const MegaverseService_1 = __importDefault(require("./services/MegaverseService"));
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
-        const polyanetAPI = new PolyanetsAPI_1.default();
-        try {
-            console.log('Starting to create polyanet map...');
-            yield polyanetAPI.createDesiredMap();
-            console.log('Successfully created polyanet map!');
+        const megaverseService = new MegaverseService_1.default();
+        if (process.env.PHASE === "ONE") {
+            try {
+                console.log('Starting to create polyanet map...');
+                yield megaverseService.createDesiredMapPhaseOne();
+                console.log('Successfully created polyanet map!');
+            }
+            catch (error) {
+                console.error('Failed to create polyanet map:', error);
+                process.exit(1);
+            }
         }
-        catch (error) {
-            console.error('Failed to create polyanet map:', error);
-            process.exit(1);
+        else if (process.env.PHASE === "TWO") {
+            try {
+                console.log('Starting to create phase two map...');
+                yield megaverseService.createDesiredMapPhaseTwo();
+                console.log('Successfully created phase two map!');
+            }
+            catch (error) {
+                console.error('Failed to create phase two map:', error);
+                process.exit(1);
+            }
         }
     });
 }

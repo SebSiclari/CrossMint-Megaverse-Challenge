@@ -8,3 +8,6 @@ export interface Coordinates {
     column: number;
 }
 
+export type Colors = "blue" | "red" | "purple" | "white";
+
+export type Direction = "up" | "down" | "left" | "right";

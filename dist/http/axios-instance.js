@@ -7,7 +7,7 @@ const axios_1 = __importDefault(require("axios"));
 const config_1 = __importDefault(require("../config/config"));
 const axiosInstance = axios_1.default.create({
     baseURL: config_1.default.apiBaseUrl,
-    timeout: 10000,
+    timeout: 60000,
     headers: {
         "Content-Type": "application/json",
     },

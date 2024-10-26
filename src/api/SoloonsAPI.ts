@@ -1,5 +1,5 @@
 import axiosInstance from "../http/axios-instance";
-import { Coordinates } from "../interfaces/interfaces";
+import { Coordinates, Colors } from "../interfaces/interfaces";
 import { AxiosInstance } from "axios";
 import config from "../config/config";
 
@@ -8,7 +8,6 @@ interface ISoloonsAPI {
     deleteSoloons: (coordinates: Coordinates) => Promise<void>;
 }
 
-type Colors = "blue" | "red" | "purple" | "white";
 
 
 class SoloonsAPI implements ISoloonsAPI {
@@ -22,6 +21,13 @@ class SoloonsAPI implements ISoloonsAPI {
         this.candidateId = config.candidateId;
     }
 
+    /**
+     * Creates a soloons at the specified coordinates with the given color
+     * @param coordinates - The coordinates where the soloons will be created
+     * @param color - The color of the soloons
+     * @throws Error if creating the soloons fails
+     */
+
     public async createSoloons(coordinates: Coordinates, color: Colors): Promise<void> {
 
         try {
@@ -32,11 +38,18 @@ class SoloonsAPI implements ISoloonsAPI {
             color,
             candidateId: this.candidateId
             }
-            await this.axiosInstance.post(url, body);
+            const response = await this.axiosInstance.post(url, body);
+            return response.data;
         } catch (error) {
             console.error(error);
         }
     }
+
+    /**
+     * Deletes a soloons at the specified coordinates
+     * @param coordinates - The coordinates where the soloons will be deleted
+     * @throws Error if deleting the soloons fails
+     */
 
     public async deleteSoloons(coordinates: Coordinates): Promise<void> {
         try {
@@ -46,7 +59,8 @@ class SoloonsAPI implements ISoloonsAPI {
             column: coordinates.column,
             candidateId: this.candidateId
         }
-            await this.axiosInstance.delete(url, { data: body });
+            const response = await this.axiosInstance.delete(url, { data: body });
+            return response.data;
         } catch (error) {
             console.error(error);
         }

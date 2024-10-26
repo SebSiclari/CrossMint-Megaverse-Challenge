@@ -43,12 +43,13 @@ class PolyanetsAPI implements IPolyanetAPI {
     public async createPolyanet({ row, column }: Coordinates): Promise<void> {
         const url = `${this.apiBaseUrl}/polyanets`;
         try {
-            const response = await this.axiosInstance.post<Polyanet>(url, {
+            const body = {  
                 row,
                 column,
                 candidateId: this.candidateId
-            });
-            console.log(response.data);
+            }
+            await this.axiosInstance.post<Polyanet>(url, body);
+
         } catch (error) {
             throw new Error(`Error creating polyanet: ${error}`);
         }
@@ -63,16 +64,16 @@ class PolyanetsAPI implements IPolyanetAPI {
     public async deletePolyanet({ row, column }: Coordinates): Promise<void> {
         const url = `${this.apiBaseUrl}/polyanets`;
         try {
-            const response = await this.axiosInstance.delete(url, {
-                data: {
-                    row,
-                    column,
-                    candidateId: this.candidateId
-                }
+            const body = {
+                row,
+                column,
+                candidateId: this.candidateId
+            }
+            await this.axiosInstance.delete(url, {
+                data: body
             });
-            console.log(response.data);
         } catch (error) {
-
+            console.error(error);
             throw new Error(`Error deleting polyanet: ${error}`);
         }
     }

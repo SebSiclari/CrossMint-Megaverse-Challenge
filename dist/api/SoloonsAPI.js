@@ -12,58 +12,59 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const config_1 = __importDefault(require("../config/config"));
 const axios_instance_1 = __importDefault(require("../http/axios-instance"));
-class PolyanetsAPI {
+const config_1 = __importDefault(require("../config/config"));
+class SoloonsAPI {
     constructor() {
+        this.axiosInstance = axios_instance_1.default;
         this.apiBaseUrl = config_1.default.apiBaseUrl;
         this.candidateId = config_1.default.candidateId;
-        this.axiosInstance = axios_instance_1.default;
     }
     /**
-     * Creates a polyanet at the specified coordinates
-     * @param coordinates - The row and column coordinates where the polyanet should be created
-     * @throws Error if creating the polyanet fails
+     * Creates a soloons at the specified coordinates with the given color
+     * @param coordinates - The coordinates where the soloons will be created
+     * @param color - The color of the soloons
+     * @throws Error if creating the soloons fails
      */
-    createPolyanet(_a) {
-        return __awaiter(this, arguments, void 0, function* ({ row, column }) {
-            const url = `${this.apiBaseUrl}/polyanets`;
+    createSoloons(coordinates, color) {
+        return __awaiter(this, void 0, void 0, function* () {
             try {
+                const url = `${this.apiBaseUrl}/soloons`;
                 const body = {
-                    row,
-                    column,
+                    row: coordinates.row,
+                    column: coordinates.column,
+                    color,
                     candidateId: this.candidateId
                 };
-                yield this.axiosInstance.post(url, body);
+                const response = yield this.axiosInstance.post(url, body);
+                return response.data;
             }
             catch (error) {
-                throw new Error(`Error creating polyanet: ${error}`);
+                console.error(error);
             }
         });
     }
     /**
-     * Deletes a polyanet at the specified coordinates
-     * @param coordinates - The row and column coordinates of the polyanet to delete
-     * @throws Error if deleting the polyanet fails
+     * Deletes a soloons at the specified coordinates
+     * @param coordinates - The coordinates where the soloons will be deleted
+     * @throws Error if deleting the soloons fails
      */
-    deletePolyanet(_a) {
-        return __awaiter(this, arguments, void 0, function* ({ row, column }) {
-            const url = `${this.apiBaseUrl}/polyanets`;
+    deleteSoloons(coordinates) {
+        return __awaiter(this, void 0, void 0, function* () {
             try {
+                const url = `${this.apiBaseUrl}/soloons`;
                 const body = {
-                    row,
-                    column,
+                    row: coordinates.row,
+                    column: coordinates.column,
                     candidateId: this.candidateId
                 };
-                yield this.axiosInstance.delete(url, {
-                    data: body
-                });
+                const response = yield this.axiosInstance.delete(url, { data: body });
+                return response.data;
             }
             catch (error) {
                 console.error(error);
-                throw new Error(`Error deleting polyanet: ${error}`);
             }
         });
     }
 }
-exports.default = PolyanetsAPI;
+exports.default = SoloonsAPI;

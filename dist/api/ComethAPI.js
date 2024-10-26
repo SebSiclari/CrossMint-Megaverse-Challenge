@@ -12,58 +12,60 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const config_1 = __importDefault(require("../config/config"));
 const axios_instance_1 = __importDefault(require("../http/axios-instance"));
-class PolyanetsAPI {
+const config_1 = __importDefault(require("../config/config"));
+class ComethAPI {
     constructor() {
         this.apiBaseUrl = config_1.default.apiBaseUrl;
         this.candidateId = config_1.default.candidateId;
         this.axiosInstance = axios_instance_1.default;
     }
     /**
-     * Creates a polyanet at the specified coordinates
-     * @param coordinates - The row and column coordinates where the polyanet should be created
-     * @throws Error if creating the polyanet fails
+     * Creates a cometh at the specified coordinates with the given direction
+     * @param coordinates - The coordinates where the cometh will be created
+     * @param direction - The direction of the cometh
+     * @throws Error if creating the cometh fails
      */
-    createPolyanet(_a) {
-        return __awaiter(this, arguments, void 0, function* ({ row, column }) {
-            const url = `${this.apiBaseUrl}/polyanets`;
+    createCometh(coordinates, direction) {
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log(coordinates, direction);
             try {
+                const url = `${this.apiBaseUrl}/comeths`;
                 const body = {
-                    row,
-                    column,
+                    row: coordinates.row,
+                    column: coordinates.column,
+                    direction,
                     candidateId: this.candidateId
                 };
-                yield this.axiosInstance.post(url, body);
+                const response = yield this.axiosInstance.post(url, body);
+                yield response.data;
             }
             catch (error) {
-                throw new Error(`Error creating polyanet: ${error}`);
+                console.error(error);
             }
         });
     }
     /**
-     * Deletes a polyanet at the specified coordinates
-     * @param coordinates - The row and column coordinates of the polyanet to delete
-     * @throws Error if deleting the polyanet fails
+     * Deletes a cometh at the specified coordinates
+     * @param coordinates - The coordinates where the cometh will be deleted
+     * @throws Error if deleting the cometh fails
      */
-    deletePolyanet(_a) {
-        return __awaiter(this, arguments, void 0, function* ({ row, column }) {
-            const url = `${this.apiBaseUrl}/polyanets`;
+    deleteCometh(coordinates) {
+        return __awaiter(this, void 0, void 0, function* () {
             try {
+                const url = `${this.apiBaseUrl}/comeths`;
                 const body = {
-                    row,
-                    column,
+                    row: coordinates.row,
+                    column: coordinates.column,
                     candidateId: this.candidateId
                 };
-                yield this.axiosInstance.delete(url, {
-                    data: body
-                });
+                const response = yield this.axiosInstance.delete(url, { data: body });
+                yield response.data;
             }
             catch (error) {
                 console.error(error);
-                throw new Error(`Error deleting polyanet: ${error}`);
             }
         });
     }
 }
-exports.default = PolyanetsAPI;
+exports.default = ComethAPI;
