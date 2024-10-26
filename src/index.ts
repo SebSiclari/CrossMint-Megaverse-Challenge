@@ -1,13 +1,13 @@
-import PolyanetAPI from "./api/PolyanetsAPI";
+import MegaverseService from "./services/MegaverseService";
 import dotenv from 'dotenv';
 
 dotenv.config();
 
 async function main(): Promise<void> {
-    const polyanetAPI = new PolyanetAPI();
+    const megaverseService = new MegaverseService();
     try {
         console.log('Starting to create polyanet map...');
-        await polyanetAPI.createDesiredMap();
+        await megaverseService.createDesiredMapPhaseOne();
         console.log('Successfully created polyanet map!');
     } catch (error) {
         console.error('Failed to create polyanet map:', error);

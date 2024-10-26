@@ -97,7 +97,7 @@ class PolyanetsAPI {
                     if (planet === "POLYANET") {
                         try {
                             yield this.createPolyanet({ row: r, column: c });
-                            yield delay(1000);
+                            yield delay(1000); // Rate Limiting to avoid API throttling 
                         }
                         catch (error) {
                             throw new Error(`Error creating polyanet: ${error}`);

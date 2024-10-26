@@ -3,4 +3,8 @@ export interface Config {
     apiBaseUrl: string;
   }
 
+export interface Coordinates {
+    row: number;
+    column: number;
+}
 

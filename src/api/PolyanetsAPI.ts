@@ -1,11 +1,7 @@
 import config from "../config/config";
 import axiosInstance from "../http/axios-instance";
 import { AxiosInstance } from "axios";
-
-interface Coordinates {
-    row: number;
-    column: number;
-}
+import { Coordinates } from "../interfaces/interfaces";
 
 type Planets = "SPACE" | "POLYANET"
 
@@ -14,8 +10,8 @@ interface GoalMap {
 }
 
 interface IPolyanetAPI {
+    createPolyanet: (coordinates: Coordinates) => Promise<void>;
     deletePolyanet: (coordinates: Coordinates) => Promise<void>;
-    createDesiredMap: () => Promise<void>;
 } 
 
 interface Polyanet {
@@ -25,8 +21,6 @@ interface Polyanet {
 }
 
 
-
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 class PolyanetsAPI implements IPolyanetAPI {
     private axiosInstance: AxiosInstance;
@@ -39,21 +33,6 @@ class PolyanetsAPI implements IPolyanetAPI {
         this.axiosInstance = axiosInstance;
     }
 
-    /**
-     * Fetches the goal map from the API
-     * @returns Promise containing the goal map data
-     * @throws Error if fetching the goal map fails
-     */
-
-    private async getGoalMap(): Promise<GoalMap> {
-        const url = `${this.apiBaseUrl}/map/${this.candidateId}/goal`;
-        try {
-            const response = await this.axiosInstance.get<GoalMap>(url);
-            return response.data;
-        } catch (error) {
-            throw new Error(`Error fetching goal map: ${error}`);
-        }
-    }
 
     /**
      * Creates a polyanet at the specified coordinates
@@ -61,10 +40,10 @@ class PolyanetsAPI implements IPolyanetAPI {
      * @throws Error if creating the polyanet fails
      */
 
-    private async createPolyanet({ row, column }: Coordinates): Promise<void> {
+    public async createPolyanet({ row, column }: Coordinates): Promise<void> {
         const url = `${this.apiBaseUrl}/polyanets`;
         try {
-            const response = await this.axiosInstance.post(url, {
+            const response = await this.axiosInstance.post<Polyanet>(url, {
                 row,
                 column,
                 candidateId: this.candidateId
@@ -98,45 +77,6 @@ class PolyanetsAPI implements IPolyanetAPI {
         }
     }
 
-    /**
-     * Creates polyanets based on the provided goal map
-     * @param goal - 2D array representing the desired map layout
-     * @throws Error if creating any polyanet fails
-     */
-
-    private async createPolyanetsFromGoal(goal: Planets[][]): Promise<void> {
-        const rows = goal.length;
-        const columns = goal[0].length;
-
-        for (let r = 0; r < rows; r++) {
-            for (let c = 0; c < columns; c++) {
-                const planet = goal[r][c];
-                if (planet === "POLYANET") {
-                    try {
-                        await this.createPolyanet({ row: r, column: c });
-                        await delay(1000); // Rate Limiting to avoid API throttling 
-                    } catch (error) {
-                        throw new Error(`Error creating polyanet: ${error}`);
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Creates the complete map according to the goal map fetched from the API
-     * @throws Error if creating the map fails at any step
-     */
-
-    public async createDesiredMap(): Promise<void> {
-        try {
-            const { goal } = await this.getGoalMap();
-            await this.createPolyanetsFromGoal(goal);
-        } catch (error) {
-            console.error('Failed to create desired map:', error);
-            throw new Error(`Error creating desired map: ${error}`);
-        }
-    }
 }
 
 export default PolyanetsAPI
