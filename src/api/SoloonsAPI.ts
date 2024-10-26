@@ -3,6 +3,13 @@ import { Coordinates, Colors } from "../interfaces/interfaces";
 import { AxiosInstance } from "axios";
 import config from "../config/config";
 
+class SoloonsError extends Error {
+    constructor(message: string) {
+        super(message);
+        this.name = 'SoloonsError';
+    }
+}
+
 interface ISoloonsAPI {
     createSoloons: (coordinates: Coordinates, color: Colors) => Promise<void>;
     deleteSoloons: (coordinates: Coordinates) => Promise<void>;
@@ -42,6 +49,7 @@ class SoloonsAPI implements ISoloonsAPI {
             return response.data;
         } catch (error) {
             console.error(error);
+            throw new SoloonsError(`Failed to create soloons at coordinates (${coordinates.row}, ${coordinates.column}): ${error}`);
         }
     }
 
@@ -63,6 +71,7 @@ class SoloonsAPI implements ISoloonsAPI {
             return response.data;
         } catch (error) {
             console.error(error);
+            throw new SoloonsError(`Failed to delete soloons at coordinates (${coordinates.row}, ${coordinates.column}): ${error}`);
         }
     }
 

@@ -4,7 +4,12 @@ import { AxiosInstance } from "axios";
 import config from "../config/config";
 
 
-
+class ComethError extends Error {
+    constructor(message: string) {
+        super(message);
+        this.name = 'ComethError';
+    }
+}
 
 interface IComethAPI {
     createCometh: (coordinates: Coordinates, direction: Direction) => Promise<void>;
@@ -26,11 +31,10 @@ class ComethAPI implements IComethAPI {
      * Creates a cometh at the specified coordinates with the given direction
      * @param coordinates - The coordinates where the cometh will be created
      * @param direction - The direction of the cometh
-     * @throws Error if creating the cometh fails
+     * @throws ComethError if creating the cometh fails
      */
 
     public async createCometh(coordinates: Coordinates, direction: Direction): Promise<void> {
-
         console.log(coordinates, direction);
         try {
             const url = `${this.apiBaseUrl}/comeths`;
@@ -44,13 +48,14 @@ class ComethAPI implements IComethAPI {
            await response.data;
         } catch (error) {
             console.error(error);
+            throw new ComethError(`Failed to create cometh at coordinates (${coordinates.row}, ${coordinates.column}): ${error}`);
         }
     }
 
     /**
      * Deletes a cometh at the specified coordinates
      * @param coordinates - The coordinates where the cometh will be deleted
-     * @throws Error if deleting the cometh fails
+     * @throws ComethError if deleting the cometh fails
      */
 
     public async deleteCometh(coordinates: Coordinates): Promise<void> {
@@ -65,6 +70,7 @@ class ComethAPI implements IComethAPI {
             await response.data;
         } catch (error) {
             console.error(error);
+            throw new ComethError(`Failed to delete cometh at coordinates (${coordinates.row}, ${coordinates.column}): ${error}`);
         }
     }
 }

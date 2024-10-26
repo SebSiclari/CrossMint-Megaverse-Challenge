@@ -3,24 +3,17 @@ import axiosInstance from "../http/axios-instance";
 import { AxiosInstance } from "axios";
 import { Coordinates } from "../interfaces/interfaces";
 
-type Planets = "SPACE" | "POLYANET"
-
-interface GoalMap {
-    goal: Planets[][];
+class PolyanetError extends Error {
+    constructor(message: string) {
+        super(message);
+        this.name = 'PolyanetError';
+    }
 }
 
 interface IPolyanetAPI {
     createPolyanet: (coordinates: Coordinates) => Promise<void>;
     deletePolyanet: (coordinates: Coordinates) => Promise<void>;
-} 
-
-interface Polyanet {
-    row: number;
-    column: number;
-    candidateId: string;
 }
-
-
 
 class PolyanetsAPI implements IPolyanetAPI {
     private axiosInstance: AxiosInstance;
@@ -33,51 +26,46 @@ class PolyanetsAPI implements IPolyanetAPI {
         this.axiosInstance = axiosInstance;
     }
 
-
     /**
      * Creates a polyanet at the specified coordinates
-     * @param coordinates - The row and column coordinates where the polyanet should be created
-     * @throws Error if creating the polyanet fails
+     * @param coordinates - The coordinates where the polyanet will be created
+     * @throws PolyanetError if creating the polyanet fails
      */
-
-    public async createPolyanet({ row, column }: Coordinates): Promise<void> {
-        const url = `${this.apiBaseUrl}/polyanets`;
+    public async createPolyanet(coordinates: Coordinates): Promise<void> {
         try {
-            const body = {  
-                row,
-                column,
+            const url = `${this.apiBaseUrl}/polyanets`;
+            const body = {
+                row: coordinates.row,
+                column: coordinates.column,
                 candidateId: this.candidateId
             }
-            await this.axiosInstance.post<Polyanet>(url, body);
-
+            const response = await this.axiosInstance.post(url, body);
+            await response.data;
         } catch (error) {
-            throw new Error(`Error creating polyanet: ${error}`);
+            console.error(error);
+            throw new PolyanetError(`Failed to create polyanet at coordinates (${coordinates.row}, ${coordinates.column}): ${error}`);
         }
     }
 
     /**
      * Deletes a polyanet at the specified coordinates
-     * @param coordinates - The row and column coordinates of the polyanet to delete
-     * @throws Error if deleting the polyanet fails
+     * @param coordinates - The coordinates where the polyanet will be deleted
+     * @throws PolyanetError if deleting the polyanet fails
      */
-
-    public async deletePolyanet({ row, column }: Coordinates): Promise<void> {
-        const url = `${this.apiBaseUrl}/polyanets`;
+    public async deletePolyanet(coordinates: Coordinates): Promise<void> {
         try {
+            const url = `${this.apiBaseUrl}/polyanets`;
             const body = {
-                row,
-                column,
+                row: coordinates.row,
+                column: coordinates.column,
                 candidateId: this.candidateId
             }
-            await this.axiosInstance.delete(url, {
-                data: body
-            });
+            await this.axiosInstance.delete(url, { data: body });
         } catch (error) {
             console.error(error);
-            throw new Error(`Error deleting polyanet: ${error}`);
+            throw new PolyanetError(`Failed to delete polyanet at coordinates (${coordinates.row}, ${coordinates.column}): ${error}`);
         }
     }
-
 }
 
-export default PolyanetsAPI
+export default PolyanetsAPI;
