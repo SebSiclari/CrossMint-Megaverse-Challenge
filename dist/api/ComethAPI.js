@@ -14,6 +14,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const axios_instance_1 = __importDefault(require("../http/axios-instance"));
 const config_1 = __importDefault(require("../config/config"));
+class ComethError extends Error {
+    constructor(message) {
+        super(message);
+        this.name = 'ComethError';
+    }
+}
 class ComethAPI {
     constructor() {
         this.apiBaseUrl = config_1.default.apiBaseUrl;
@@ -24,7 +30,7 @@ class ComethAPI {
      * Creates a cometh at the specified coordinates with the given direction
      * @param coordinates - The coordinates where the cometh will be created
      * @param direction - The direction of the cometh
-     * @throws Error if creating the cometh fails
+     * @throws ComethError if creating the cometh fails
      */
     createCometh(coordinates, direction) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -42,13 +48,14 @@ class ComethAPI {
             }
             catch (error) {
                 console.error(error);
+                throw new ComethError(`Failed to create cometh at coordinates (${coordinates.row}, ${coordinates.column}): ${error}`);
             }
         });
     }
     /**
      * Deletes a cometh at the specified coordinates
      * @param coordinates - The coordinates where the cometh will be deleted
-     * @throws Error if deleting the cometh fails
+     * @throws ComethError if deleting the cometh fails
      */
     deleteCometh(coordinates) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -64,6 +71,7 @@ class ComethAPI {
             }
             catch (error) {
                 console.error(error);
+                throw new ComethError(`Failed to delete cometh at coordinates (${coordinates.row}, ${coordinates.column}): ${error}`);
             }
         });
     }

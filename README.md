@@ -1,12 +1,30 @@
-NOTES ON THE PROJECT 
-- MEGAVERSE API DOCS
-- the megaverse api is a REST API, all API routes below refer to a singel route:https://challenge.crossmint.io/api/
-- IMPORTANT: ALL API ROUUTES TAKE A REQUIRED PARAMETER CANDIDATEID
+# Crossmint Megaverse Challenge
 
-# POLYANETS-PHASE 1
+A TypeScript solution for the Crossmint Megaverse Challenge that creates a 2D space with various astral objects (POLYanets, SOLoons, and comETHs) by interacting with the Crossmint API.
 
- - POST /api/polyanets with arguments: candidateId, row, column
-    - this route is used to create a polyanet at a given row and column
-    - the polyanet will have a "white" color by default
-- DELETE /api/polyantes/
+## Overview
+
+This project automates the creation of a megaverse map through the Crossmint API. It handles two phases:
+
+- **Phase 1**: Creates a basic map with only POLYanets
+- **Phase 2**: Creates a complex map including POLYanets, SOLoons (with colors), and comETHs (with directions)
+
+## Features
+
+- Fully automated map creation
+- Rate limiting to handle API constraints
+- Type-safe implementation using TypeScript
+- Modular architecture with separate services for each entity type
+- Error handling and logging
+- Environment-based configuration
+
+## Prerequisites
+
+- Node.js >= 18.0.0
+- npm or yarn
+- A Crossmint candidate ID
+
+## Installation
+
+1. Clone the repository:
 

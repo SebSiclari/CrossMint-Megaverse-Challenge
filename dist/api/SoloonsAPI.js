@@ -14,6 +14,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const axios_instance_1 = __importDefault(require("../http/axios-instance"));
 const config_1 = __importDefault(require("../config/config"));
+class SoloonsError extends Error {
+    constructor(message) {
+        super(message);
+        this.name = 'SoloonsError';
+    }
+}
 class SoloonsAPI {
     constructor() {
         this.axiosInstance = axios_instance_1.default;
@@ -37,10 +43,11 @@ class SoloonsAPI {
                     candidateId: this.candidateId
                 };
                 const response = yield this.axiosInstance.post(url, body);
-                return response.data;
+                yield response.data;
             }
             catch (error) {
                 console.error(error);
+                throw new SoloonsError(`Failed to create soloons at coordinates (${coordinates.row}, ${coordinates.column}): ${error}`);
             }
         });
     }
@@ -59,10 +66,11 @@ class SoloonsAPI {
                     candidateId: this.candidateId
                 };
                 const response = yield this.axiosInstance.delete(url, { data: body });
-                return response.data;
+                yield response.data;
             }
             catch (error) {
                 console.error(error);
+                throw new SoloonsError(`Failed to delete soloons at coordinates (${coordinates.row}, ${coordinates.column}): ${error}`);
             }
         });
     }

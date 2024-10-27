@@ -65,20 +65,7 @@ class MegaverseService {
    * @returns Promise containing the goal map data
    * @throws Error if fetching the goal map fails
    */
-    getGoalMapPhaseOne() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const url = `${this.apiBaseUrl}/map/${this.candidateId}/goal`;
-            try {
-                const response = yield this.axiosInstance.get(url);
-                return response.data;
-            }
-            catch (error) {
-                throw new Error(`Error fetching goal map: ${error}`);
-            }
-        });
-    }
-    // NOTE: Think about how to determine the phase 
-    getGoalMapPhaseTwo() {
+    getGoalMapPhase() {
         return __awaiter(this, void 0, void 0, function* () {
             const url = `${this.apiBaseUrl}/map/${this.candidateId}/goal`;
             try {
@@ -150,12 +137,6 @@ class MegaverseService {
                         }
                     }));
                     tasks.push(task);
-                    // Process in batches of 5 to avoid overwhelming the API
-                    if (tasks.length === 5) {
-                        yield Promise.all(tasks);
-                        yield delay(1000);
-                        tasks.length = 0;
-                    }
                 }
             }
             // Process any remaining tasks
@@ -175,7 +156,7 @@ class MegaverseService {
     createDesiredMapPhaseOne() {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const { goal } = yield this.getGoalMapPhaseOne();
+                const { goal } = yield this.getGoalMapPhase();
                 yield this.createPhaseOneMapFromGoal(goal);
             }
             catch (error) {
@@ -191,7 +172,7 @@ class MegaverseService {
     createDesiredMapPhaseTwo() {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const { goal } = yield this.getGoalMapPhaseTwo();
+                const { goal } = yield this.getGoalMapPhase();
                 yield this.createPhaseTwoMapFromGoal(goal);
             }
             catch (error) {
