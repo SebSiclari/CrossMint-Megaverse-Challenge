@@ -1,6 +1,4 @@
-import { axiosInstance } from "../http/axios-instance";
-import type { AxiosInstance } from "axios";
-import config from "../config/config";
+import type { ServiceConfig } from "../interfaces/interfaces";
 import type { Cometh } from "../domain/entities/Cometh";
 
 class ComethError extends Error {
@@ -17,9 +15,7 @@ interface IComethAPI {
 
 export class ComethAPI implements IComethAPI {
   constructor(
-    private readonly apiBaseUrl: string = config.apiBaseUrl,
-    private readonly candidateId: string = config.candidateId,
-    private readonly axiosInstances: AxiosInstance = axiosInstance
+    private readonly config: ServiceConfig
   ) {}
 
   /**
@@ -29,14 +25,14 @@ export class ComethAPI implements IComethAPI {
    */
   public async createCometh(cometh: Cometh): Promise<void> {
     try {
-      const url = `${this.apiBaseUrl}/comeths`;
+      const url = `${this.config.apiBaseUrl}/comeths`;
       const body = {
         row: cometh.coordinates.row,
         column: cometh.coordinates.column,
         direction: cometh.direction,
-        candidateId: this.candidateId,
+        candidateId: this.config.candidateId,
       };
-      const response = await this.axiosInstances.post(url, body);
+      const response = await this.config.axiosInstance.post(url, body);
       await response.data;
     } catch (error) {
       console.error(error);
@@ -53,13 +49,13 @@ export class ComethAPI implements IComethAPI {
    */
   public async deleteCometh(cometh: Cometh): Promise<void> {
     try {
-      const url = `${this.apiBaseUrl}/comeths`;
+      const url = `${this.config.apiBaseUrl}/comeths`;
       const body = {
         row: cometh.coordinates.row,
         column: cometh.coordinates.column,
-        candidateId: this.candidateId,
+        candidateId: this.config.candidateId,
       };
-      const response = await this.axiosInstances.delete(url, { data: body });
+      const response = await this.config.axiosInstance.delete(url, { data: body });
       await response.data;
     } catch (error) {
       console.error(error);
@@ -69,5 +65,3 @@ export class ComethAPI implements IComethAPI {
     }
   }
 }
-
-export default ComethAPI;

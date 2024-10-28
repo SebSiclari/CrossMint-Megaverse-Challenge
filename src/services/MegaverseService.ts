@@ -1,11 +1,8 @@
 import { PolyanetsAPI } from "../api/PolyanetsAPI";
 import { SoloonsAPI } from "../api/SoloonsAPI";
 import { ComethAPI } from "../api/ComethAPI";
-import config from "../config/config";
-import { axiosInstance } from "../http/axios-instance";
-import type { AxiosInstance } from "axios";
 import Bottleneck from "bottleneck";
-import type { Colors, Direction } from "../interfaces/interfaces";
+import type { Colors, Direction, ServiceConfig } from "../interfaces/interfaces";
 import { Cometh } from "../domain/entities/Cometh";
 import { Polyanet } from "../domain/entities/Polyanets";
 import { Soloon } from "../domain/entities/Soloons";
@@ -27,24 +24,17 @@ interface GoalMapPhaseTwo {
 const SPACE = "SPACE";
 const POLYANET = "POLYANET";
 
+
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 
 export class MegaverseService {
-	private axiosInstance: AxiosInstance;
-	private apiBaseUrl: string;
-	private candidateId: string;
-	private polyanetsAPI: PolyanetsAPI;
-	private soloonsAPI: SoloonsAPI;
-	private comethAPI: ComethAPI;
-	constructor() {
-		this.apiBaseUrl = config.apiBaseUrl;
-		this.candidateId = config.candidateId;
-		this.axiosInstance = axiosInstance;
-		this.polyanetsAPI = new PolyanetsAPI();
-		this.soloonsAPI = new SoloonsAPI();
-		this.comethAPI = new ComethAPI();
-	}
+	constructor(
+        private readonly config: ServiceConfig,
+        private readonly polyanetsAPI: PolyanetsAPI = new PolyanetsAPI(config),
+        private readonly soloonsAPI: SoloonsAPI = new SoloonsAPI(config),
+        private readonly comethAPI: ComethAPI = new ComethAPI(config),
+    ) {}
 
 	/**
 	 * Checks if a planet is a soloon
@@ -88,9 +78,9 @@ export class MegaverseService {
 	 * @throws Error if fetching the goal map fails
 	 */
 	private async getGoalMapPhase(): Promise<GoalMapPhaseOne | GoalMapPhaseTwo> {
-		const url = `${this.apiBaseUrl}/map/${this.candidateId}/goal`;
+		const url = `${this.config.apiBaseUrl}/map/${this.config.candidateId}/goal`;
 		try {
-			const response = await this.axiosInstance.get<
+			const response = await this.config.axiosInstance.get<
 				GoalMapPhaseOne | GoalMapPhaseTwo
 			>(url);
 			return response.data;
@@ -142,7 +132,7 @@ export class MegaverseService {
         // API THROTTLES AT 3 REQUESTS PER SECOND
 		const limiter = new Bottleneck({
 			maxConcurrent: 2,
-			minTime: 1000,
+			minTime: 2000,
 		});
 
 		for (let r = 0; r < rows; r++) {
@@ -211,4 +201,3 @@ export class MegaverseService {
 	}
 }
 
-export default MegaverseService;

@@ -1,9 +1,9 @@
 import dotenv from 'dotenv';
-import { Config } from '../interfaces/interfaces';
+import type { Config } from '../interfaces/interfaces';
 
 dotenv.config();
 
-const config = {
+export const config = {
     candidateId: process.env.CROSSMINT_CANDIDATE_ID,
     apiBaseUrl: process.env.CROSSMINT_API_URL,
   } as Config;
@@ -17,6 +17,6 @@ const config = {
     );
   }
 
-  export default config;
+  
 
 

@@ -1,7 +1,5 @@
-import config from "../config/config";
-import { axiosInstance } from "../http/axios-instance";
-import type { AxiosInstance } from "axios";
 import type { Polyanet } from "../domain/entities/Polyanets";
+import type { ServiceConfig } from "../interfaces/interfaces";
 
 
 class PolyanetError extends Error {
@@ -18,9 +16,7 @@ interface IPolyanetAPI {
 
 export class PolyanetsAPI implements IPolyanetAPI {
   constructor(
-    private readonly apiBaseUrl: string = config.apiBaseUrl,
-    private readonly candidateId: string = config.candidateId,
-    private readonly axiosInstances: AxiosInstance = axiosInstance
+    private readonly config: ServiceConfig
   ) {}
 
   /**
@@ -30,13 +26,13 @@ export class PolyanetsAPI implements IPolyanetAPI {
    */
   public async createPolyanet(polyanet: Polyanet): Promise<void> {
     try {
-      const url = `${this.apiBaseUrl}/polyanets`;
+      const url = `${this.config.apiBaseUrl}/polyanets`;
       const body = {
         row: polyanet.coordinates.row,
         column: polyanet.coordinates.column,
-        candidateId: this.candidateId,
+        candidateId: this.config.candidateId,
       };
-      const response = await this.axiosInstances.post(url, body);
+      const response = await this.config.axiosInstance.post(url, body);
       await response.data;
     } catch (error) {
       console.error(error);
@@ -53,13 +49,13 @@ export class PolyanetsAPI implements IPolyanetAPI {
    */
   public async deletePolyanet(polyanet: Polyanet): Promise<void> {
     try {
-      const url = `${this.apiBaseUrl}/polyanets`;
+      const url = `${this.config.apiBaseUrl}/polyanets`;
       const body = {
         row: polyanet.coordinates.row,
         column: polyanet.coordinates.column,
-        candidateId: this.candidateId,
+        candidateId: this.config.candidateId,
       };
-      const response = await this.axiosInstances.delete(url, { data: body });
+      const response = await this.config.axiosInstance.delete(url, { data: body });
       await response.data;
     } catch (error) {
       console.error(error);

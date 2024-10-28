@@ -1,7 +1,6 @@
-import { axiosInstance } from "../http/axios-instance";
-import type { AxiosInstance } from "axios";
-import config from "../config/config";
 import type { Soloon } from "../domain/entities/Soloons";
+import type { ServiceConfig } from "../interfaces/interfaces";
+
 
 class SoloonsError extends Error {
   constructor(message: string) {
@@ -17,9 +16,7 @@ interface ISoloonsAPI {
 
 export class SoloonsAPI implements ISoloonsAPI {
   constructor(
-    private readonly apiBaseUrl: string = config.apiBaseUrl,
-    private readonly candidateId: string = config.candidateId,
-    private readonly axiosInstances: AxiosInstance = axiosInstance
+    private readonly config: ServiceConfig
   ) {}
 
   /**
@@ -29,14 +26,14 @@ export class SoloonsAPI implements ISoloonsAPI {
    */
   public async createSoloons(soloon: Soloon): Promise<void> {
     try {
-      const url = `${this.apiBaseUrl}/soloons`;
+      const url = `${this.config.apiBaseUrl}/soloons`;
       const body = {
         row: soloon.coordinates.row,
         column: soloon.coordinates.column,
         color: soloon.color,
-        candidateId: this.candidateId,
+        candidateId: this.config.candidateId,
       };
-      const response = await this.axiosInstances.post(url, body);
+      const response = await this.config.axiosInstance.post(url, body);
       await response.data;
     } catch (error) {
       console.error(error);
@@ -53,13 +50,13 @@ export class SoloonsAPI implements ISoloonsAPI {
    */
   public async deleteSoloons(soloon: Soloon): Promise<void> {
     try {
-      const url = `${this.apiBaseUrl}/soloons`;
+      const url = `${this.config.apiBaseUrl}/soloons`;
       const body = {
         row: soloon.coordinates.row,
         column: soloon.coordinates.column,
-        candidateId: this.candidateId,
+        candidateId: this.config.candidateId,
       };
-      const response = await this.axiosInstances.delete(url, { data: body });
+      const response = await this.config.axiosInstance.delete(url, { data: body });
       await response.data;
     } catch (error) {
       console.error(error);
@@ -70,4 +67,3 @@ export class SoloonsAPI implements ISoloonsAPI {
   }
 }
 
-export default SoloonsAPI;

@@ -1,10 +1,25 @@
-import MegaverseService from "./services/MegaverseService";
+import { MegaverseService } from "./services/MegaverseService";
+import { PolyanetsAPI } from "./api/PolyanetsAPI";
+import { SoloonsAPI } from "./api/SoloonsAPI";
+import { ComethAPI } from "./api/ComethAPI";
+import { config } from "./config/config";
+import { axiosInstance } from "./http/axios-instance";
 import dotenv from 'dotenv';
 
 dotenv.config();
 
 async function main(): Promise<void> {
-    const megaverseService = new MegaverseService();
+
+   const defaultServiceConfig = {
+        ...config,
+        axiosInstance
+    }
+
+    const megaverseService = new MegaverseService(defaultServiceConfig,
+        new PolyanetsAPI(defaultServiceConfig),
+        new SoloonsAPI(defaultServiceConfig),
+        new ComethAPI(defaultServiceConfig),
+    );
 
     if (process.env.PHASE === "ONE") {
     try {
