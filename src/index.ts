@@ -42,7 +42,6 @@ async function main(): Promise<void> {
     }
 }
 
-// Immediately invoke main function and handle any unhandled promise rejections
 main().catch(error => {
     console.error('Unhandled error:', error);
     process.exit(1);
